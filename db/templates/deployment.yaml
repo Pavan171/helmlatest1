@@ -2,41 +2,44 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ .Values.db.name }}
+  {{- with .Values.db.labels }}
   labels:
-{{- toYaml .Values.db.labels | nindent 4 }}
+{{ toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   selector:
     matchLabels:
-{{- toYaml .Values.db.labels | nindent 6 }}
+      {{- with .Values.db.labels }}
+{{ toYaml . | nindent 6 }}
+      {{- end }}
   replicas: {{ .Values.db.replicas }}
   template:
     metadata:
+      {{- with .Values.db.labels }}
       labels:
-{{- toYaml .Values.db.labels | nindent 8 }}
+{{ toYaml . | nindent 8 }}
+      {{- end }}
     spec:
       containers:
-      - name: {{ .Values.db.name }}
-        image: {{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}
-        imagePullPolicy: {{ .Values.db.image.pullPolicy }}
-        envFrom:
-          - configMapRef:
-              name: {{ .Values.db.name }}-configmap
-              optional: false
-          - secretRef:
-              name: {{ .Values.db.name }}-secret
-              optional: false
-        ports:
-        - containerPort: {{ .Values.db.containerPorts.mysql }}
-      
-      #  volumeMounts:
-       # - name: {{ .Values.db.name }}-volume
-        #  mountPath: /var/lib/mysql       # Path inside container
-      #volumes:
-      #- name: {{ .Values.db.name }}-volume
-       # hostPath:
-#<<<<<<< HEAD
- #         path: /var/lib/wp-data     # Path in host machine
-=======
-#         path: /var/lib/wp-data     # Path in host machine
-     
-#>>>>>>> d88d378fb6e945c284ef995fc42d5b67de6ba73d
+        - name: {{ .Values.db.name }}
+          image: {{ .Values.db.image.repository }}:{{ .Values.db.image.tag }}
+          imagePullPolicy: {{ .Values.db.image.pullPolicy }}
+          envFrom:
+            - configMapRef:
+                name: {{ .Values.db.name }}-configmap
+                optional: false
+            - secretRef:
+                name: {{ .Values.db.name }}-secret
+                optional: false
+          ports:
+            - containerPort: {{ .Values.db.containerPorts.mysql }}
+
+# Uncomment below if you want to use volume mounts
+#          volumeMounts:
+#            - name: {{ .Values.db.name }}-volume
+#              mountPath: /var/lib/mysql
+
+#      volumes:
+#        - name: {{ .Values.db.name }}-volume
+#          hostPath:
+#            path: /var/lib/wp-data  # Path in host machine

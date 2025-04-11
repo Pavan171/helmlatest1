@@ -33,4 +33,9 @@ spec:
       volumes:
       - name: {{ .Values.db.name }}-volume
         hostPath:
+<<<<<<< HEAD
           path: /var/lib/wp-data     # Path in host machine
+=======
+         path: /var/lib/wp-data     # Path in host machine
+     
+>>>>>>> d88d378fb6e945c284ef995fc42d5b67de6ba73d
